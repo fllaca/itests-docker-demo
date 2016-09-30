@@ -1,0 +1,1 @@
+docker run -d --name some-mysql -e MYSQL_ROOT_PASSWORD=1234 -p 3307:3306 -v $(pwd)/src/test/resources/database:/docker-entrypoint-initdb.d mysql
