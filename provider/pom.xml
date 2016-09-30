@@ -5,7 +5,7 @@
 
 	<groupId>com.ferdi.microservices</groupId>
 	<artifactId>provider</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.2-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>provider</name>
@@ -19,6 +19,7 @@
 	</parent>
 
 	<properties>
+		<docker.image.prefix>fllaca</docker.image.prefix>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
@@ -112,6 +113,30 @@
 					</execution>
 				</executions>
 			</plugin>
+			
+			<plugin>
+	            <groupId>com.spotify</groupId>
+	            <artifactId>docker-maven-plugin</artifactId>
+	            <version>0.4.11</version>
+	            <configuration>
+	            	<!-- optionally overwrite tags every time image is built with docker:build -->
+        			<forceTags>true</forceTags>
+	            	<imageTags>
+			           <imageTag>${project.version}</imageTag>
+			           <imageTag>latest</imageTag>
+			        </imageTags>
+	                <imageName>${docker.image.prefix}/${project.artifactId}</imageName>
+	                <dockerDirectory>src/main/docker</dockerDirectory>
+	                <entryPoint>["java", "-jar", "/${project.build.finalName}.jar"]</entryPoint>
+	                <resources>
+	                    <resource>
+	                        <targetPath>/</targetPath>
+	                        <directory>${project.build.directory}</directory>
+	                        <include>${project.build.finalName}.jar</include>
+	                    </resource>
+	                </resources>
+	            </configuration>
+	        </plugin>
 		</plugins>
 	</build>
 
