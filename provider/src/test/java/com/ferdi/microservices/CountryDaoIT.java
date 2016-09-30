@@ -28,7 +28,7 @@ public class CountryDaoIT {
 	
 	@Before
 	public void setUp(){
-		dao.save(SPAIN);
+		//dao.save(SPAIN);
 	}
 	
 	@Test
@@ -44,7 +44,7 @@ public class CountryDaoIT {
 	
 	@After
 	public void tearDown(){
-		dao.delete(SPAIN);
+		//dao.delete(SPAIN);
 	}
 
 }
