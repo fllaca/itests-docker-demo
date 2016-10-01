@@ -1,4 +1,4 @@
-package com.ferdi.microservices.dao;
+package com.ferdi.microservices.repository;
 
 import java.util.Set;
 
@@ -6,9 +6,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.CrudRepository;
 
-import com.ferdi.microservices.entities.Country;
+import com.ferdi.microservices.model.Country;
 
-public interface CountryDao  extends CrudRepository<Country, String> {
+public interface CountryRepository  extends CrudRepository<Country, String> {
 
     Set<Country> findByNameIgnoreCaseContaining(String name);
     

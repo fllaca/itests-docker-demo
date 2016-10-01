@@ -1,4 +1,4 @@
-package com.ferdi.microservices.rest;
+package com.ferdi.microservices.controller;
 
 import java.util.Map;
 

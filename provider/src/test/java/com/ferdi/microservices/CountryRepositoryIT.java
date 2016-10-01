@@ -14,17 +14,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.ferdi.microservices.dao.CountryDao;
-import com.ferdi.microservices.entities.Country;
+import com.ferdi.microservices.model.Country;
+import com.ferdi.microservices.repository.CountryRepository;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @Category(IntegrationTest.class)
-public class CountryDaoIT {
+public class CountryRepositoryIT {
 	
 	private static final Country SPAIN = new Country("Spain","ESP");
 	@Autowired
-	private CountryDao dao;
+	private CountryRepository dao;
 	
 	@Before
 	public void setUp(){

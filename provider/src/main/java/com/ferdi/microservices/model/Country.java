@@ -1,4 +1,4 @@
-package com.ferdi.microservices.entities;
+package com.ferdi.microservices.model;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;

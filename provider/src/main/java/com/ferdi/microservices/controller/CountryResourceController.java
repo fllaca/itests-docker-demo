@@ -1,6 +1,5 @@
-package com.ferdi.microservices.rest;
+package com.ferdi.microservices.controller;
 
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -14,8 +13,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ferdi.microservices.bean.ErrorBean;
-import com.ferdi.microservices.dao.CountryDao;
-import com.ferdi.microservices.entities.Country;
+import com.ferdi.microservices.model.Country;
+import com.ferdi.microservices.service.CountryService;
 
 @RestController
 @RequestMapping("/api/${api.version}/country")
@@ -23,7 +22,7 @@ public class CountryResourceController {
 
 	private static final int DEFAULT_NUM_RESULTS_IN_PAGE = 20;
 	@Autowired
-	private CountryDao countryDao;
+	private CountryService countryService;
 
 	@RequestMapping(method = RequestMethod.GET)
 	public ResponseEntity<Set<Country>> getCountries(@RequestParam(value = "count", required = false) Integer count,
@@ -31,7 +30,7 @@ public class CountryResourceController {
 
 		int numResults = count != null ? count : DEFAULT_NUM_RESULTS_IN_PAGE;
 
-		Set<Country> findByName = countryDao.findByNameIgnoreCaseContaining(query)
+		Set<Country> findByName = countryService.searchCountries(query)
 				.stream().limit(numResults).collect(Collectors.toSet());
 
 		return ResponseEntity.ok().body(findByName);
@@ -39,7 +38,7 @@ public class CountryResourceController {
 
 	@RequestMapping(value = "/{code}", method = RequestMethod.GET)
 	public ResponseEntity getCountry(@PathVariable String code) {
-		Country country = countryDao.findOne(code);
+		Country country = countryService.getCountry(code);
 		if (country != null) {
 			return ResponseEntity.ok().body(country);
 		} else {
