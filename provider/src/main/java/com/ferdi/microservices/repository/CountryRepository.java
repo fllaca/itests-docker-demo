@@ -12,7 +12,7 @@ public interface CountryRepository  extends CrudRepository<Country, String> {
 
     Set<Country> findByNameIgnoreCaseContaining(String name);
     
-    Set<Country> findByCode(String code);
+    Country findByCode(String code);
     
     Page<Country> findAll(Pageable pageable);
 }

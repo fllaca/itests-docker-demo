@@ -21,7 +21,7 @@ public class DefaultCountryService implements CountryService{
 
 	@Override
 	public Country getCountry(String code) {
-		return countryRepository.findOne(code);
+		return countryRepository.findByCode(code);
 	}
 
 	@Override
