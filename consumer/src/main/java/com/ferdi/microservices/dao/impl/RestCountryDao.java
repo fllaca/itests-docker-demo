@@ -13,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestOperations;
 
 import com.ferdi.microservices.bean.CountryBean;
@@ -29,24 +31,28 @@ public class RestCountryDao implements CountryDao{
 	
 	@Override
 	public CountryBean getCountry(String code) {
-		HttpHeaders headers = new HttpHeaders();
-       
-		headers.add("content-type", "application/json");
+		try {
+			HttpHeaders headers = new HttpHeaders();
+      
+			headers.add("content-type", "application/json");
 
-        HttpEntity payload = new HttpEntity(headers);
+			HttpEntity payload = new HttpEntity(headers);
 
-        String requestUrl = new StringBuilder(apiBaseUrl)
-        		.append("/api/1/country/")
-        		.append(code)
-        		.toString();
-        
-        ResponseEntity<CountryBean> response = restTemplate.exchange(requestUrl, HttpMethod.GET, payload, CountryBean.class);
-        
-        if (response.getStatusCode().equals(HttpStatus.NOT_FOUND)) {
-        	return null;
-        }
-        
-        return response.getBody();
+			String requestUrl = new StringBuilder(apiBaseUrl)
+					.append("/api/1/country/")
+					.append(code)
+					.toString();
+			
+			ResponseEntity<CountryBean> response = restTemplate.exchange(requestUrl, HttpMethod.GET, payload, CountryBean.class);
+			
+			return response.getBody();
+		} catch (HttpClientErrorException e) {
+			if (e.getStatusCode().equals(HttpStatus.NOT_FOUND)) {
+				return null;
+			} else {
+				throw e;
+			}
+		}
 	}
 
 	@Override
