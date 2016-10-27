@@ -1,19 +1,19 @@
 version: '2'
-    services:
-      tests:
-        image: maven:3.3.9-jdk-8
-        container_name: maven-${bamboo_buildResultKey}
-        volumes:
-         - ${bamboo_working_directory}/provider:/data
-         - /vagrant/.m2:/root/.m2
-        working_dir: /data
-        command: mvn clean verify -Dspring.profiles.active=itest
-        depends_on:
-         - database
-      database:
-        image: mysql
-        container_name: mysql-${bamboo_buildResultKey}
-        volumes:
-         - ${bamboo_working_directory}/provider/src/test/resources/database:/docker-entrypoint-initdb.d/
-        environment:
-         - MYSQL_ROOT_PASSWORD: 1234
+services:
+  tests:
+    image: maven:3.3.9-jdk-8
+    container_name: maven-${bamboo_buildResultKey}
+    volumes:
+     - ${bamboo_working_directory}/provider:/data
+     - /vagrant/.m2:/root/.m2
+    working_dir: /data
+    command: mvn clean verify -Dspring.profiles.active=itest
+    depends_on:
+     - database
+  database:
+    image: mysql
+    container_name: mysql-${bamboo_buildResultKey}
+    volumes:
+     - ${bamboo_working_directory}/provider/src/test/resources/database:/docker-entrypoint-initdb.d/
+    environment:
+     - MYSQL_ROOT_PASSWORD: 1234
