@@ -16,4 +16,4 @@ services:
     volumes:
      - ${bamboo_working_directory}/provider/src/test/resources/database:/docker-entrypoint-initdb.d/
     environment:
-     - MYSQL_ROOT_PASSWORD: 1234
+     MYSQL_ROOT_PASSWORD: 1234
