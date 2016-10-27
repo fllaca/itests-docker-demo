@@ -7,7 +7,7 @@ services:
      - ${bamboo_working_directory}/provider:/data
      - /vagrant/.m2:/root/.m2
     working_dir: /data
-    command: mvn clean verify -Dspring.profiles.active=itest
+    command: mvn clean
     depends_on:
      - database
   database:
