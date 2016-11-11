@@ -5,7 +5,7 @@ services:
     container_name: maven-${bamboo_buildResultKey}
     volumes:
      - ${bamboo_working_directory}/provider:/data
-     - /vagrant/.m2:/root/.m2
+     - ${HOME}/.m2:/root/.m2
     working_dir: /data
     command: mvn clean
     depends_on:
