@@ -1,0 +1,99 @@
+---
+oid: 7304979333083299841
+key: CT
+name: Compose Tests
+project:
+  oid: 7305964495501787137
+  key: PROV
+repositories:
+- oid: 7305401545548365825
+  parentRepository: 7305401545548365825
+triggers:
+- name: Repository polling
+  description: ''
+  pluginKey: com.atlassian.bamboo.triggers.atlassian-bamboo-triggers:poll
+  enabled: true
+  configuration:
+    repository.change.poll.pollingPeriod: '180'
+    repository.change.poll.type: PERIOD
+    repository.change.poll.cronExpression: 0 0 0 ? * *
+  triggerConditions:
+    com.atlassian.bamboo.triggercondition.internal:plansGreenCondition:
+      enabled: 'false'
+  triggeringRepositories:
+  - 7305401545548365825
+branchConfiguration:
+  planBranchCreation:
+    enabled: false
+  removedBranchCleanup:
+    enabled: false
+  inactiveBranchesCleanup:
+    enabled: false
+  merging:
+    enabled: false
+  notificationStrategy: notifyCommitters
+  triggers: inherited
+  issueLinking: enabled
+dependencies:
+  configuration:
+    enabledForBranches: 'true'
+    requireAllStagesPassing: null
+    blockingStrategy: none
+  childPlans: []
+permissions:
+  users:
+    admin:
+    - administration
+    - build
+    - clone
+    - read
+    - write
+  groups: {}
+  roles:
+    user:
+    - read
+    anonymous:
+    - read
+stages:
+- oid: 7305120070571655169
+  name: Default Stage
+  jobs:
+  - oid: 7305260808060010497
+    key: JOB1
+    name: Default Job
+    tasks:
+    - oid: 7305823758013431809
+      description: Checkout Default Repository
+      pluginKey: com.atlassian.bamboo.plugins.vcs:task.vcs.checkout
+      configuration:
+        repositories:
+        - ref: defaultRepository
+    - oid: 7305823758013434883
+      description: Run maven Tests
+      pluginKey: com.atlassian.bamboo.plugins.scripttask:task.builder.script
+      configuration:
+        interpreter: run_as_executable
+        script: |-
+          docker-compose up -d
+          # OJO! no usar sleep 5 para esperar a que la base de datos este levantada.
+          # Aquí podéis encontrar una forma de realizar una espera activa: https://github.com/jwilder/dockerize#waiting-for-other-dependencies
+          docker-compose run --rm tests mvn clean verify -Dspring.profiles.active=itest
+    - oid: 7305823758013434884
+      description: Parse Integration test results
+      pluginKey: com.atlassian.bamboo.plugins.testresultparser:task.testresultparser.junit
+      configuration:
+        testResultsDirectory: '**/failsafe-reports/*.xml'
+        pickupOutdatedFiles: ''
+    - oid: 7305823758013434882
+      description: remove containers
+      pluginKey: com.atlassian.bamboo.plugins.scripttask:task.builder.script
+      final: true
+      configuration:
+        interpreter: run_as_executable
+        script: |-
+          docker-compose stop
+          docker-compose rm -f
+    buildDefinition:
+      cleanWorkingDirectory: false
+      repositoryDefiningWorkingDirectory: -1
+...
