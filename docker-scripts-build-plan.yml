@@ -1,0 +1,125 @@
+---
+oid: 7304979333083300865
+key: ST
+name: Scripted Tests
+project:
+  oid: 7305964495501787137
+  key: PROV
+repositories:
+- oid: 7305401545548365827
+  parentRepository: 7305401545548365825
+triggers:
+- name: Repository polling
+  description: ''
+  pluginKey: com.atlassian.bamboo.triggers.atlassian-bamboo-triggers:poll
+  enabled: true
+  configuration:
+    repository.change.poll.pollingPeriod: '180'
+    repository.change.poll.type: PERIOD
+    repository.change.poll.cronExpression: 0 0 0 ? * *
+  triggerConditions:
+    com.atlassian.bamboo.triggercondition.internal:plansGreenCondition:
+      enabled: 'false'
+  triggeringRepositories:
+  - 7305401545548365827
+branchConfiguration:
+  planBranchCreation:
+    enabled: false
+  removedBranchCleanup:
+    enabled: false
+  inactiveBranchesCleanup:
+    enabled: false
+  merging:
+    enabled: false
+  notificationStrategy: notifyCommitters
+  triggers: inherited
+  issueLinking: enabled
+dependencies:
+  configuration:
+    enabledForBranches: 'true'
+    requireAllStagesPassing: null
+    blockingStrategy: none
+  childPlans: []
+permissions:
+  users:
+    admin:
+    - administration
+    - build
+    - clone
+    - read
+    - write
+  groups: {}
+  roles:
+    user:
+    - read
+    anonymous:
+    - read
+stages:
+- oid: 7305120070571657217
+  name: Default Stage
+  jobs:
+  - oid: 7305260808060011521
+    key: JOB1
+    name: Default Job
+    tasks:
+    - oid: 7305823758013431809
+      description: Checkout Default Repository
+      pluginKey: com.atlassian.bamboo.plugins.vcs:task.vcs.checkout
+      configuration:
+        repositories:
+        - ref: defaultRepository
+    - oid: 7305823758013434881
+      description: Start IntegrationTests database
+      pluginKey: com.atlassian.bamboo.plugins.scripttask:task.builder.script
+      configuration:
+        interpreter: legacy_sh_bat
+        script: |-
+          docker run -d --name mysql-$bamboo_buildResultKey \
+          -v $bamboo_working_directory/provider/src/test/resources/database:/docker-entrypoint-initdb.d/ \
+          -v $bamboo_working_directory:/data \
+          -e MYSQL_ROOT_PASSWORD=1234 \
+          -w /data \
+          mysql
+    - oid: 7305823758013431809
+      description: Wait until database is up
+      pluginKey: com.atlassian.bamboo.plugins.scripttask:task.builder.script
+      configuration:
+        interpreter: run_as_executable
+        script: "# OJO! hacemos una espera fija de 5 segundos... \n# pero lo correcto\
+          \ es esperar hasta que el servicio este activo. En este caso,\n# esperar\
+          \ a que el puerto de la base de datos responda a través de TCP\n# en este\
+          \ enlace podéis ver una forma de hacerlo: https://github.com/jwilder/dockerize#waiting-for-other-dependencies\n\
+          sleep 5"
+    - oid: 7305823758013434883
+      description: Run maven Tests
+      pluginKey: com.atlassian.bamboo.plugins.scripttask:task.builder.script
+      configuration:
+        interpreter: run_as_executable
+        script: |-
+          docker run -i --name maven-$bamboo_buildResultKey \
+          --link mysql-$bamboo_buildResultKey:database \
+          -v /vagrant/.m2:/root/.m2 \
+          -v $bamboo_working_directory/provider:/data \
+          -w /data \
+          maven:3.3.9-jdk-8 mvn clean verify -Dspring.profiles.active=itest
+    - oid: 7305823758013434884
+      description: Parse Integration test results
+      pluginKey: com.atlassian.bamboo.plugins.testresultparser:task.testresultparser.junit
+      configuration:
+        testResultsDirectory: '**/failsafe-reports/*.xml'
+        pickupOutdatedFiles: ''
+    - oid: 7305823758013434882
+      description: remove containers
+      pluginKey: com.atlassian.bamboo.plugins.scripttask:task.builder.script
+      final: true
+      configuration:
+        interpreter: run_as_executable
+        script: |-
+          docker stop mysql-$bamboo_buildResultKey
+          docker stop maven-$bamboo_buildResultKey
+          docker rm mysql-$bamboo_buildResultKey
+          docker rm maven-$bamboo_buildResultKey
+    buildDefinition:
+      cleanWorkingDirectory: false
+      repositoryDefiningWorkingDirectory: -1
+...
