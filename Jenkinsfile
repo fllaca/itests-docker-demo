@@ -1,3 +1,7 @@
+stage "Checkout Code"
+
+checkout scm
+
 stage "Prepare Environment"
 sh "echo $BUILD_NUMBER"
 sh "docker run -d --name mysql-$bamboo_buildResultKey \
