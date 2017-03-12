@@ -1,28 +1,31 @@
-stage "Checkout Code"
 
-checkout scm
+node {
+	stage "Checkout Code"
 
-stage "Prepare Environment"
-sh "echo $BUILD_NUMBER"
-sh '''docker run -d --name mysql-$bamboo_buildResultKey \\
-          -v $bamboo_working_directory/provider/src/test/resources/database:/docker-entrypoint-initdb.d/ \\
-          -v $bamboo_working_directory:/data \\
-          -e MYSQL_ROOT_PASSWORD=1234 \\
-          -w /data \\
-          mysql'''
+	checkout scm
 
-stage "Run Tests"
+	stage "Prepare Environment"
+	sh "echo $BUILD_NUMBER"
+	sh '''docker run -d --name mysql-$bamboo_buildResultKey \\
+	          -v $bamboo_working_directory/provider/src/test/resources/database:/docker-entrypoint-initdb.d/ \\
+	          -v $bamboo_working_directory:/data \\
+	          -e MYSQL_ROOT_PASSWORD=1234 \\
+	          -w /data \\
+	          mysql'''
 
-sh '''docker run -i --name maven-$bamboo_buildResultKey \\
-          --link mysql-$bamboo_buildResultKey:database \\
-          -v /home/jenkins/.m2:/root/.m2 \\
-          -v $bamboo_working_directory/provider:/data \\
-          -w /data \\
-          maven:3.3.9-jdk-8 mvn clean verify -Dspring.profiles.active=itest '''
+	stage "Run Tests"
 
-stage "Tear Down"
+	sh '''docker run -i --name maven-$bamboo_buildResultKey \\
+	          --link mysql-$bamboo_buildResultKey:database \\
+	          -v /home/jenkins/.m2:/root/.m2 \\
+	          -v $bamboo_working_directory/provider:/data \\
+	          -w /data \\
+	          maven:3.3.9-jdk-8 mvn clean verify -Dspring.profiles.active=itest '''
 
-sh '''docker stop mysql-$bamboo_buildResultKey
-          docker stop maven-$bamboo_buildResultKey
-          docker rm mysql-$bamboo_buildResultKey
-          docker rm maven-$bamboo_buildResultKey'''
+	stage "Tear Down"
+
+	sh '''docker stop mysql-$bamboo_buildResultKey
+	          docker stop maven-$bamboo_buildResultKey
+	          docker rm mysql-$bamboo_buildResultKey
+	          docker rm maven-$bamboo_buildResultKey'''
+}
