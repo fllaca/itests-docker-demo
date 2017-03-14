@@ -18,9 +18,9 @@ node {
 	stage "Wait for Environment"
 
 	sh '''
-	docker run --rm -it \\
+	docker run --rm \\
 		--link mysql-$JOB_NAME-$BUILD_NUMBER:database \\
-		jwilder/dockerize dockerize -wait tcp://database
+		jwilder/dockerize dockerize -wait tcp://database -timeout 20s
 	'''
 
 	stage "Run Tests"
