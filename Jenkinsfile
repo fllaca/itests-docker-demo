@@ -6,8 +6,7 @@ node {
 
 	stage "Prepare Environment"
 	
-	sh 
-	'''
+	sh '''
 	docker run -d --name mysql-$JOB_NAME-$BUILD_NUMBER \\
       -v $(pwd)/provider/src/test/resources/database:/docker-entrypoint-initdb.d/ \\
       -v $(pwd):/data \\
@@ -18,8 +17,7 @@ node {
 
 	stage "Wait for Environment"
 
-	sh
-	'''
+	sh '''
 	docker run --rm -it \\
 		--link mysql-$JOB_NAME-$BUILD_NUMBER:database \\
 		jwilder/dockerize dockerize -wait tcp://database
@@ -27,8 +25,7 @@ node {
 
 	stage "Run Tests"
 
-	sh 
-	'''
+	sh '''
 	docker run -i --name maven-$JOB_NAME-$BUILD_NUMBER \\
       --link mysql-$JOB_NAME-$BUILD_NUMBER:database \\
       -v /home/jenkins/.m2:/root/.m2 \\
@@ -39,8 +36,7 @@ node {
 
 	stage "Tear Down"
 
-	sh 
-	'''
+	sh '''
 	docker stop mysql-$JOB_NAME-$BUILD_NUMBER
     docker stop maven-$JOB_NAME-$BUILD_NUMBER
     docker rm mysql-$JOB_NAME-$BUILD_NUMBER
