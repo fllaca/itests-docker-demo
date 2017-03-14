@@ -45,6 +45,7 @@ node {
 	    docker stop maven-$JOB_NAME-$BUILD_NUMBER
 	    docker rm mysql-$JOB_NAME-$BUILD_NUMBER
 	    docker rm maven-$JOB_NAME-$BUILD_NUMBER
+	    exit 0
 	    '''
 	}
 }
