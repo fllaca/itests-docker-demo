@@ -41,11 +41,10 @@ node {
 		stage "Tear Down"
 
 		sh '''
-		docker stop mysql-$JOB_NAME-$BUILD_NUMBER
-	    docker stop maven-$JOB_NAME-$BUILD_NUMBER
-	    docker rm mysql-$JOB_NAME-$BUILD_NUMBER
-	    docker rm maven-$JOB_NAME-$BUILD_NUMBER
-	    exit 0
+		docker stop mysql-$JOB_NAME-$BUILD_NUMBER || true && \\
+	    docker stop maven-$JOB_NAME-$BUILD_NUMBER || true && \\
+	    docker rm mysql-$JOB_NAME-$BUILD_NUMBER || true && \\
+	    docker rm maven-$JOB_NAME-$BUILD_NUMBER || true
 	    '''
 	}
 }
