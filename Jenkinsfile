@@ -44,6 +44,5 @@ node {
 	    sh "docker stop maven-$JOB_NAME-$BUILD_NUMBER || true "
 	    sh "docker rm mysql-$JOB_NAME-$BUILD_NUMBER || true "
 	    sh "docker rm maven-$JOB_NAME-$BUILD_NUMBER || true "
-	    '''
 	}
 }
