@@ -22,7 +22,7 @@ node {
 		sh '''
 		docker run --rm \\
 			--link mysql-$JOB_NAME-$BUILD_NUMBER:database \\
-			jwilder/dockerize dockerize -wait tcp://database:3306 -timeout 30s
+			jwilder/dockerize dockerize -wait tcp://database:3306 -timeout 60s
 		'''
 
 		stage "Run Tests"

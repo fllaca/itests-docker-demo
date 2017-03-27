@@ -15,7 +15,7 @@ node {
 		stage "Wait for Environment"
 
 		sh '''
-		docker-compose -f docker-compose-jenkins.yaml run --rm status-checker dockerize -wait tcp://database:3306 -timeout 20s
+		docker-compose -f docker-compose-jenkins.yaml run --rm status-checker dockerize -wait tcp://database:3306 -timeout 60s
 		'''
 
 		stage "Run Tests"
