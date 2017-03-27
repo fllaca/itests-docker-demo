@@ -29,8 +29,7 @@ node {
 		stage "Tear Down"
 
 		sh '''
-		docker-compose -f docker-compose-jenkins.yaml stop && \\
-		docker-compose -f docker-compose-jenkins.yaml rm -f
+		docker-compose -f docker-compose-jenkins.yaml down
 		'''
 	}
 }
