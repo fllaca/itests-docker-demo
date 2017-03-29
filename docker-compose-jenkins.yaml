@@ -18,7 +18,7 @@ services:
 
   # Actual Environment
   database:
-    image: mysql
+    image: mysql:5.6
     #container_name: mysql-${JOB_NAME}-${BUILD_NUMBER}
     volumes:
      - ./provider/src/test/resources/database:/docker-entrypoint-initdb.d/

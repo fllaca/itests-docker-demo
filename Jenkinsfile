@@ -14,7 +14,7 @@ node {
 	      -v $(pwd):/data \\
 	      -e MYSQL_ROOT_PASSWORD=1234 \\
 	      -w /data \\
-	      mysql
+	      mysql:5.6
 		'''
 
 		stage "Wait for Environment"
