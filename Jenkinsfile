@@ -28,12 +28,12 @@ node {
 		stage "Run Tests"
 
 		sh '''
-		docker run -i --name maven-$JOB_NAME-$BUILD_NUMBER \\
+		docker run -i -u $(id -u jenkins) --name maven-$JOB_NAME-$BUILD_NUMBER \\
 	      --link mysql-$JOB_NAME-$BUILD_NUMBER:database \\
-	      -v /home/jenkins/.m2:/root/.m2 \\
+	      -v /home/jenkins/.m2:/home/jenkins/.m2 \\
 	      -v $(pwd)/provider:/data \\
 	      -w /data \\
-	      maven:3.3.9-jdk-8 mvn clean verify -Dspring.profiles.active=itest 
+	      maven:3.5.0-jdk-8 mvn clean verify -Dspring.profiles.active=itest -Duser.home=/home/jenkins
 		'''
 
 	} finally {
