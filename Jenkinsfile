@@ -33,8 +33,11 @@ node {
 	      -v /home/jenkins/.m2:/home/jenkins/.m2 \\
 	      -v $(pwd)/provider:/data \\
 	      -w /data \\
-	      maven:3.5.0-jdk-8 mvn clean verify -Dspring.profiles.active=itest -Duser.home=/home/jenkins
+	      maven-jenkins:3.5.0-jdk-8 mvn clean verify -Dspring.profiles.active=itest
 		'''
+
+        // config with standar maven docker image:
+		// maven:3.5.0-jdk-8 mvn clean verify -Dspring.profiles.active=itest -Duser.home=/home/jenkins
 
 	} finally {
 
