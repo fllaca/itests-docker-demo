@@ -1,4 +1,4 @@
-# Integration Test with Docker + Bamboo
+# Integration Test with Docker 
 
 Code and resources used in the Codemotion2106 talk '[Tests de Integración Automatizados con Docker y Bamboo](https://2016.codemotion.es/agenda.html#5716304078045184/85544006)'
 
